@@ -209,6 +209,7 @@ async function generation(videoname,imgname) {
           url: '/generation_file/',
           type: 'POST',
           data: formData,
+          timeout: 300000, // 设置为 300 秒钟
           processData: false,
           contentType: false,
           success: function(response) {
@@ -223,9 +224,14 @@ async function generation(videoname,imgname) {
                   hideLoading()
               }
           },
-          error: function() {
-            alert('服务器连接失败');
-            hideLoading()
+          error: function(xhr, status, error,response) {
+            // 失败回调函数
+            if (status === 'timeout') {
+              // 请求超时
+              alert('请求超时，请稍后重试');
+            } else {
+              alert('请求失败，请稍后重试:'+response.message);
+            }
           }
         });
 }

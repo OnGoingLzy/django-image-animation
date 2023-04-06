@@ -112,8 +112,8 @@ USE_I18N = True
 
 USE_TZ = True
 
-VIDEO_ROOT = "F:/学习/2023毕设/keshe/Real_Time_Image_Animation/video_input"
-IMG_ROOT = "F:/学习/2023毕设/keshe/Real_Time_Image_Animation/inputs"
+VIDEO_ROOT = "F:/学习/2023毕设/keshe/Real_Time_Image_Animation/video_input/"
+IMG_ROOT = "F:/学习/2023毕设/keshe/Real_Time_Image_Animation/inputs/"
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
