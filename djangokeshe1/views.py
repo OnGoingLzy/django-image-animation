@@ -99,10 +99,10 @@ def register(request):
 @csrf_exempt
 def send_sms(req):
     phone_number = req.POST['phone_number']
-    access_key_id = 'LTAI5tS6e4hGR4v4G5K3jK9W'
-    access_key_secret = 'GTEr3HcsThuGWMJB58hdRj5E9JAhck'
-    sign_name = 'crabyellow'
-    template_code = 'SMS_276045403'
+    access_key_id = 'x'
+    access_key_secret = 'x'
+    sign_name = 'x'
+    template_code = 'x'
     acs_client = AcsClient(access_key_id, access_key_secret, 'cn-hangzhou')
     code = ''.join(random.sample('0123456789', 6))
     request = CommonRequest()
