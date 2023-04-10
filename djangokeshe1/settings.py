@@ -37,7 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'djangokeshe1',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -76,8 +79,15 @@ WSGI_APPLICATION = 'djangokeshe1.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'crabyellowchat',
+        'USER': 'root',
+        'PASSWORD': 'lzy3122588',
+        'HOST': 'localhost',
+        'PORT': '3306',
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+        },
     }
 }
 
@@ -126,8 +136,8 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# token
+ALIYUN_ACCESS_KEY_ID = 'your_access_key_id'
+ALIYUN_ACCESS_SECRET = 'your_access_secret'
+ALIYUN_SMS_SIGN_NAME = 'your_sms_sign_name'
+ALIYUN_SMS_TEMPLATE_CODE = 'your_sms_template_code'
 
-# STATICFILES_DIRS = (
-#     os.path.join(BASE_DIR,'static')
-# )

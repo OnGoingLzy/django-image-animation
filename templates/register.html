@@ -1,0 +1,254 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>蟹黄社区账号注册</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.108.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/7888870b4e.js" crossorigin="anonymous"></script>
+    <link rel="icon" type="image/x-icon" href="{% static 'img/logo.png' %}">
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/sign-in/">
+<link href="{% static '/bootstrap-5.3.0-alpha1-examples/assets/dist/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      .b-example-divider {
+        height: 3rem;
+        background-color: rgba(0, 0, 0, .1);
+        border: solid rgba(0, 0, 0, .15);
+        border-width: 1px 0;
+        box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+      }
+
+      .b-example-vr {
+        flex-shrink: 0;
+        width: 1.5rem;
+        height: 100vh;
+      }
+
+      .bi {
+        vertical-align: -.125em;
+        fill: currentColor;
+      }
+
+      .nav-scroller {
+        position: relative;
+        z-index: 2;
+        height: 2.75rem;
+        overflow-y: hidden;
+      }
+
+      .nav-scroller .nav {
+        display: flex;
+        flex-wrap: nowrap;
+        padding-bottom: 1rem;
+        margin-top: -1px;
+        overflow-x: auto;
+        text-align: center;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+      }
+    </style>
+      <!-- Custom styles for this template -->
+    <link href="{% static 'bootstrap-5.3.0-alpha1-examples/sign-in/sign-in.css'%}" rel="stylesheet">
+  </head>
+  <body class="text-center">
+    <main class="form-signin w-100 m-auto">
+      <form class="form-signin" id="register-form" method="post">
+        {% csrf_token %}
+        <h2 class="form-signin-heading text-center">注册</h2>
+        <div class="form-group">
+          <label for="inputPhone">手机号码</label>
+          <div class="input-group">
+            <input type="text" name="phone_number" id="phone_number" class="form-control" placeholder="请输入手机号码" required autofocus>
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" type="button" id="send_verification_code" onclick="send_code()">发送验证码</button>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inputUsername">账号名称</label>
+          <input type="text" name="username" id="username" class="form-control" placeholder="请输入账号名称" required>
+        </div>
+        <div class="form-group">
+          <label for="inputPassword">账号密码</label>
+          <input type="password" name="password" id="password" class="form-control" placeholder="请输入账号密码" required>
+        </div>
+        <div class="form-group">
+          <label for="inputConfirmPassword">确认密码</label>
+          <input type="password" name="confirm_password" id="confirm_password" placeholder="再次输入账号密码" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="inputEmail">邮箱</label>
+          <input type="email" name="email" id="email" class="form-control" placeholder="请输入邮箱" required>
+        </div>
+        <div class="form-group">
+          <label for="inputVerificationCode">验证码</label>
+          <input type="text" name="verification_code" id="verification_code" class="form-control" placeholder="请输入验证码" required>
+        </div>
+        <button class="w-100 btn btn-lg btn-primary" type="button" onclick="register()">注册</button>
+        <a href="/sign-in/">已有账号？去登录-></a>
+      </form>
+    </main>
+</body>
+<script>
+    function send_code() {
+    // 获取手机号码
+    var phone_number = $("#phone_number").val();
+    // 判断手机号码是否为空
+    if (!phone_number) {
+        alert("请输入手机号码");
+        return;
+    }
+    // 禁用发送按钮
+    $('#send_verification_code').attr("disabled", true);
+    // 发送验证码请求
+    $.ajax({
+        type: "POST",
+        url: "/send_sms/",
+        data: {
+            'phone_number': phone_number,
+            'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+        },
+        {#dataType: "json",#}
+        success: function (data) {
+            saveCodeToStorage(data.code)
+            if (data.success) {
+                alert(data.message);
+                // 倒计时60秒
+                var count = 60;
+                var timer = setInterval(function () {
+                    count--;
+                    if (count <= 0) {
+                        clearInterval(timer);
+                        $('#send_verification_code').text("重新发送");
+                        $('#send_verification_code').attr("disabled", false);
+                    } else {
+                        $('#send_verification_code').text(count + "秒后重新发送");
+                    }
+                }, 1000);
+            } else {
+                alert(data.message);
+                $('#send_verification_code').attr("disabled", false);
+            }
+        },
+        error: function () {
+            alert("发送失败");
+            $('#send_verification_code').attr("disabled", false);
+        }
+    });
+}
+
+function register() {
+    // 获取表单数据
+    var phone_number = $("#phone_number").val();
+    var username = $("#username").val();
+    var password = $("#password").val();
+    var confirm_password = $("#confirm_password").val();
+    var email = $("#email").val();
+    var code = $("#verification_code").val();
+    // 判断手机号码是否为空
+    if (!phone_number) {
+        alert("请输入手机号码");
+        return;
+    }
+    // 判断用户名是否为空
+    if (!username) {
+        alert("请输入用户名");
+        return;
+    }
+    // 判断密码是否为空
+    if (!password) {
+        alert("请输入密码");
+        return;
+    }
+    // 判断确认密码是否为空
+    if (!confirm_password) {
+        alert("请确认密码");
+        return;
+    }
+    // 判断密码和确认密码是否一致
+    if (password !== confirm_password) {
+        alert("两次输入的密码不一致");
+        return;
+    }
+    // 判断邮箱是否为空
+    if (!email) {
+        alert("请输入邮箱");
+        return;
+    }
+    // 判断验证码是否为空
+    if (getCodeFromStorage() !== code) {
+        alert("验证码错误"+getCodeFromStorage());
+        return;
+    }
+    const formData = $('#register-form').serialize();
+    // 发送注册请求
+    $.ajax({
+        type: "POST",
+        url: "/api/register/",
+        data: formData,
+        {#dataType: "json",#}
+        success: function (data) {
+            if (data.success) {
+                alert(data.message);
+                location.href = "/sign-in/";
+            } else {
+                alert(data.message);
+            }
+        },
+        error: function () {
+            alert("注册失败");
+        }
+    });
+}
+// 保存验证码到本地存储
+function saveCodeToStorage(code) {
+  // 存储验证码及过期时间，单位为毫秒
+  const expiration = new Date().getTime() + 50 * 60 * 1000;
+  const data = { code, expiration };
+  localStorage.setItem('verification_code', JSON.stringify(data));
+}
+
+// 从本地存储获取验证码
+function getCodeFromStorage() {
+  const data = localStorage.getItem('verification_code');
+  if (!data) {
+    // 本地存储中没有验证码，则返回 null
+    return null;
+  }
+  const { code, expiration } = JSON.parse(data);
+  if (new Date().getTime() > expiration) {
+    // 验证码已经过期，清除本地存储中的验证码
+    localStorage.removeItem('verification_code');
+    return null;
+  }
+  console.log("验证码"+code)
+  return code;
+}
+
+// 清除本地存储中的验证码
+function clearCodeFromStorage() {
+  localStorage.removeItem('verification_code');
+}
+</script>
+</html>
